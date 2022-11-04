@@ -3,25 +3,37 @@ import '../components/main_drawer.dart';
 import '../models/settings.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final Function(Settings) onSettingsChanged;
+  final Settings settings;
+  const SettingsScreen(this.onSettingsChanged, this.settings, {super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  var settings = Settings();
+  late Settings settings;
+
+  @override
+  void initState() {
+    super.initState();
+    settings = widget.settings;
+  }
+
   Widget _createSwitch(
     String title,
     String subtitle,
     bool value,
-    Function(bool?) onChanged,
+    Function(bool) onChanged,
   ) {
-    return SwitchListTile(
-      value: value,
-      onChanged: onChanged,
+    return SwitchListTile.adaptive(
       title: Text(title),
       subtitle: Text(subtitle),
+      value: value,
+      onChanged: (value) {
+        onChanged(value);
+        widget.onSettingsChanged(settings);
+      },
     );
   }
 
@@ -48,28 +60,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'Sem Gluten',
                     'Só exibe refeições sem glúten',
                     settings.isGlutenFree,
-                    (value) =>
-                        setState(() => settings.isGlutenFree = value as bool),
+                    (value) => setState(() => settings.isGlutenFree = value),
                   ),
                   _createSwitch(
-                    'Sem Gluten',
+                    'Sem Lactose',
                     'Só exibe refeições sem Lactose',
                     settings.isLactoseFree,
-                    (value) =>
-                        setState(() => settings.isLactoseFree = value as bool),
+                    (value) => setState(() => settings.isLactoseFree = value),
                   ),
                   _createSwitch(
-                    'Sem Gluten',
+                    'Veganas',
                     'Só exibe refeições veganas',
                     settings.isVegan,
-                    (value) => setState(() => settings.isVegan = value as bool),
+                    (value) => setState(() => settings.isVegan = value),
                   ),
                   _createSwitch(
-                    'Sem Gluten',
+                    'Vegetarianas',
                     'Só exibe refeições Vegetarianas',
                     settings.isVegetarian,
-                    (value) =>
-                        setState(() => settings.isVegetarian = value as bool),
+                    (value) => setState(() => settings.isVegetarian = value),
                   ),
                 ],
               ),
